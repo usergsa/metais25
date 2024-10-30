@@ -52,8 +52,8 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-            height: 70%;
-            margin-bottom: 20px;
+            height: 65%; /* Ajusta a altura para acomodar as miniaturas */
+            margin-bottom: 5px;
             overflow: hidden;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -96,6 +96,7 @@
             display: flex;
             gap: 10px;
             justify-content: center;
+            padding: 5px 0; /* Add some padding to separate thumbnails from the main image */
         }
 
             .thumbnail-container img {
@@ -137,15 +138,14 @@
             <img id="mainImage" src="foto1.jpg" alt="Imagem Principal">
             <button class="nav-button right" onclick="nextImage()">❯</button>
         </div>
-        <div id="content3" class="content">
-            <div class="thumbnail-container">
-                <img src="foto1.jpg" alt="Miniatura 1" onclick="selectImage(0)" class="active">
-                <img src="foto2.jpg" alt="Miniatura 2" onclick="selectImage(1)">
-                <img src="foto3.jpg" alt="Miniatura 3" onclick="selectImage(2)">
-                <img src="foto4.jpg" alt="Miniatura 4" onclick="selectImage(3)">
-                <img src="foto5.jpg" alt="Miniatura 5" onclick="selectImage(4)">
-            </div>
+        <div class="thumbnail-container">
+            <img src="foto1.jpg" alt="Miniatura 1" onclick="selectImage(0)" class="active">
+            <img src="foto2.jpg" alt="Miniatura 2" onclick="selectImage(1)">
+            <img src="foto3.jpg" alt="Miniatura 3" onclick="selectImage(2)">
+            <img src="foto4.jpg" alt="Miniatura 4" onclick="selectImage(3)">
+            <img src="foto5.jpg" alt="Miniatura 5" onclick="selectImage(4)">
         </div>
+        <div id="content3" class="content"></div>
     </div>
     <script>
         const images = ["foto1.jpg", "foto2.jpg", "foto3.jpg", "foto4.jpg", "foto5.jpg"];
