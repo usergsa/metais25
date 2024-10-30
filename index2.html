@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <style>
+        #interface {
+            height: 100vh; /* Ocupa toda a altura da tela */
+            width: 100vw;
+            background-color: black;
+            color: white;
+            display: flex; /* Organiza os filhos em uma linha */
+            flex-direction: column; /* Muda a direção para coluna */
+            overflow: hidden; /* Oculta as barras de rolagem */
+        }
+
+        .content {
+            cursor: pointer;
+            display: flex;
+            width: 100%; /* Ocupa toda a largura */
+            justify-content: center;
+            align-items: center;
+        }
+
+        #content1, #content3 {
+            height: 15%; /* Define a altura dos divs */
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            overflow: hidden; /* Oculta as barras de rolagem */
+        }
+
+        .main-image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 70%;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: relative; /* Add this */
+        }
+
+            .main-image-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover; /* Mantém o aspecto da imagem */
+            }
+
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5); /* Fundo transparente */
+            color: #fff;
+            border: none;
+            padding: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+            .nav-button:hover {
+                background-color: rgba(0, 0, 0, 0.8);
+            }
+
+            .nav-button.left {
+                left: 10px;
+            }
+
+            .nav-button.right {
+                right: 10px;
+            }
+
+        .thumbnail-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+            .thumbnail-container img {
+                width: 80px;
+                height: 60px;
+                object-fit: cover;
+                cursor: pointer;
+                border-radius: 5px;
+                opacity: 0.6; /* Deixa as miniaturas levemente transparentes */
+                transition: opacity 0.3s;
+            }
+
+                .thumbnail-container img:hover,
+                .thumbnail-container img.active {
+                    opacity: 1;
+                    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+                }
+
+        #content1 img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="interface">
+        <div id="content1" class="content">
+            <img src="fundo.jpeg" alt="Imagem Centralizada">
+        </div>
+        <div id="content2" class="main-image-container">
+            <button class="nav-button left" onclick="previousImage()">❮</button>
+            <img id="mainImage" src="foto1.jpg" alt="Imagem Principal">
+            <button class="nav-button right" onclick="nextImage()">❯</button>
+        </div>
+        <div id="content3" class="content">
+            <div class="thumbnail-container">
+                <img src="foto1.jpg" alt="Miniatura 1" onclick="selectImage(0)" class="active">
+                <img src="foto2.jpg" alt="Miniatura 2" onclick="selectImage(1)">
+                <img src="foto3.jpg" alt="Miniatura 3" onclick="selectImage(2)">
+                <img src="foto4.jpg" alt="Miniatura 4" onclick="selectImage(3)">
+                <img src="foto5.jpg" alt="Miniatura 5" onclick="selectImage(4)">
+            </div>
+        </div>
+    </div>
+    <script>
+        const images = ["foto1.jpg", "foto2.jpg", "foto3.jpg", "foto4.jpg", "foto5.jpg"];
+        let currentIndex = 0;
+        function updateMainImage() {
+            const mainImage = document.getElementById("mainImage");
+            mainImage.src = images[currentIndex];
+            const thumbnails = document.querySelectorAll(".thumbnail-container img");
+            thumbnails.forEach((thumbnail, index) => {
+                thumbnail.classList.toggle("active", index === currentIndex);
+            });
+        }
+        function nextImage() {
+            currentIndex = (currentIndex + 1) % images.length;
+            updateMainImage();
+        }
+        function previousImage() {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            updateMainImage();
+        }
+        function selectImage(index) {
+            currentIndex = index;
+            updateMainImage();
+        }
+    </script>
+</body>
+</html>
