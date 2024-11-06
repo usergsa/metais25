@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visualizador 3D</title>
+  <title>Visualizador 4D</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
   <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
@@ -28,6 +29,12 @@
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1); // Luz direcional
     directionalLight.position.set(5, 5, 5).normalize();
     scene.add(directionalLight);
+
+    // Criação de um cubo simples para verificar se a cena está funcionando
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
 
     // Carregador do modelo GLTF
     const loader = new THREE.GLTFLoader();
@@ -56,6 +63,8 @@
       camera.updateProjectionMatrix();
     });
 
+    // Controles de órbita para movimentar a câmera
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
   </script>
 </body>
 </html>
