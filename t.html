@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visualizador 4D</title>
+  <title>Visualizador 5D</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
   <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
@@ -38,7 +38,7 @@
 
     // Carregador do modelo GLTF
     const loader = new THREE.GLTFLoader();
-    loader.load('model.gltf', function (gltf) {
+    loader.load('glp.gltf', function (gltf) {
       scene.add(gltf.scene);
       
       // Ajuste da posição do modelo para garantir visibilidade
