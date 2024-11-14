@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exibir FBX com Babylon.js</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script>
+        // Criando o canvas para renderização
+        const canvas = document.createElement("canvas");
+        document.body.appendChild(canvas);
+
+        // Criar o motor Babylon.js
+        const engine = new BABYLON.Engine(canvas, true);
+
+        // Criar a cena
+        const scene = new BABYLON.Scene(engine);
+
+        // Criar uma câmera
+        const camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 4, 5, BABYLON.Vector3.Zero(), scene);
+        camera.attachControl(canvas, true);
+
+        // Adicionar luz à cena
+        const light = new BABYLON.HemisphericLight("light1", BABYLON.Vector3.Up(), scene);
+
+        // Carregar o modelo FBX
+        BABYLON.SceneLoader.Append("", "cris.fbx", scene, function (scene) {
+            scene.createDefaultCameraOrLight(true, true, true);
+        });
+
+        // Função para renderizar
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+
+        // Ajustar o tamanho do canvas quando a janela for redimensionada
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>
