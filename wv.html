@@ -3,45 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exibir FBX com Babylon.js</title>
+    <title>Exibir FBX com Three.js</title>
     <style>
-        body { margin: 0; }
+        body { margin: 0; overflow: hidden; }
         canvas { display: block; }
     </style>
 </head>
 <body>
-    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/loaders/FBXLoader.js"></script>
     <script>
-        // Criando o canvas para renderização
-        const canvas = document.createElement("canvas");
-        document.body.appendChild(canvas);
+        // Criar a cena, câmera e renderizador
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);  // Canvas ocupa a tela toda
+        document.body.appendChild(renderer.domElement);
 
-        // Criar o motor Babylon.js
-        const engine = new BABYLON.Engine(canvas, true);
+        // Luz ambiente e direcional
+        const light = new THREE.AmbientLight(0x404040); // Luz suave
+        scene.add(light);
 
-        // Criar a cena
-        const scene = new BABYLON.Scene(engine);
-
-        // Criar uma câmera
-        const camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 4, 5, BABYLON.Vector3.Zero(), scene);
-        camera.attachControl(canvas, true);
-
-        // Adicionar luz à cena
-        const light = new BABYLON.HemisphericLight("light1", BABYLON.Vector3.Up(), scene);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(1, 1, 1).normalize();
+        scene.add(directionalLight);
 
         // Carregar o modelo FBX
-        BABYLON.SceneLoader.Append("", "cris.fbx", scene, function (scene) {
-            scene.createDefaultCameraOrLight(true, true, true);
+        const loader = new THREE.FBXLoader();
+        loader.load('cris.fbx', function (object) {
+            object.scale.set(0.1, 0.1, 0.1); // Ajustar o tamanho do modelo
+            scene.add(object);
         });
 
-        // Função para renderizar
-        engine.runRenderLoop(function () {
-            scene.render();
-        });
+        // Definir a posição da câmera
+        camera.position.z = 5;
 
-        // Ajustar o tamanho do canvas quando a janela for redimensionada
-        window.addEventListener("resize", function () {
-            engine.resize();
+        // Função de animação
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Ajuste de tamanho da tela ao redimensionar a janela
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
         });
     </script>
 </body>
