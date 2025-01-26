@@ -29,12 +29,24 @@
     }
     video {
       width: 100%;
-      height: auto;
+      height: 100%;
+      object-fit: cover; /* Adicionado para manter a proporção do vídeo */
     }
     #result {
       font-size: 24px;
       font-weight: bold;
       margin-top: 20px;
+    }
+    /* Adicionado para tornar o layout mais responsivo */
+    @media (max-width: 768px) {
+      #scanner-container {
+        height: 300px;
+      }
+    }
+    @media (max-width: 480px) {
+      #scanner-container {
+        height: 200px;
+      }
     }
   </style>
 </head>
