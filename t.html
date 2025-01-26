@@ -1,76 +1,82 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizador 1D - Carregar Modelo GLB</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- GLTFLoader para carregar arquivos .glb -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leitor de Código de Barras Futurista</title>
+  <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700&display=swap">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #2f2f2f;
+      color: #fff;
+    }
+    #scanner-container {
+      width: 80%;
+      height: 500px;
+      background-color: #333;
+      margin: 40px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    }
+    video {
+      width: 100%;
+      height: auto;
+    }
+    #result {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-    <script>
-        // Configuração da cena
-        const scene = new THREE.Scene();
+  <h1 style="font-size: 36px; margin-top: 20px;">Leitor de Código de Barras Futurista</h1>
+  <div id="scanner-container"></div>
+  <p id="result">Escaneie um código de barras.</p>
 
-        // Configuração da câmera
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 5, 10);  // Ajuste a posição da câmera para uma visão ampla
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const resultElement = document.getElementById("result");
 
-        // Configuração do renderizador
-        const renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
-        // Adiciona iluminação à cena
-        const ambientLight = new THREE.AmbientLight(0x404040, 1); // Luz ambiente
-        scene.add(ambientLight);
-
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1); // Luz direcional
-        directionalLight.position.set(5, 5, 5).normalize();
-        scene.add(directionalLight);
-
-        // Carregar o modelo 3D .glb
-        const loader = new THREE.GLTFLoader();
-        loader.load('model.glb', (gltf) => {
-            // Adiciona o modelo à cena
-            scene.add(gltf.scene);
-
-            // Ajuste o tamanho e a posição do modelo se necessário
-            gltf.scene.scale.set(2, 2, 2);  // Exemplo: aumentar o modelo em 2x
-            gltf.scene.position.set(0, 0, 0);  // Ajuste a posição se necessário
-        }, undefined, (error) => {
-            console.error('Erro ao carregar o modelo', error);
-        });
-
-        // Inicializar os controles de órbita (para movimentar a câmera)
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true; // Suaviza a movimentação
-        controls.dampingFactor = 0.25; // Intensidade da suavização
-        controls.screenSpacePanning = false; // Evita que a câmera se mova para os lados ao arrastar
-        controls.maxPolarAngle = Math.PI / 2; // Impede a câmera de passar da horizontal
-        controls.enableZoom = true;  // Habilita zoom
-
-        // Função de animação
-        function animate() {
-            requestAnimationFrame(animate);
-
-            // Atualizar os controles de órbita (essencial para interatividade)
-            controls.update();
-
-            renderer.render(scene, camera);
+      // Inicializa o QuaggaJS
+      Quagga.init(
+        {
+          inputStream: {
+            type: "LiveStream",
+            target: document.querySelector("#scanner-container"),
+            constraints: {
+              facingMode: "environment", // Usa a câmera traseira
+            },
+          },
+          decoder: {
+            readers: ["code_128_reader", "ean_reader", "ean_8_reader"], // Suporte a diferentes tipos de código
+          },
+        },
+        (err) => {
+          if (err) {
+            console.error("Erro ao iniciar o Quagga:", err);
+            resultElement.textContent = "Erro ao iniciar o leitor.";
+            return;
+          }
+          Quagga.start();
         }
+      );
 
-        animate();  // Inicia a animação
-
-        // Função para ajustar a tela ao redimensionar a janela
-        window.addEventListener('resize', function () {
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-        });
-
-    </script>
+      // Detecta códigos de barras
+      Quagga.onDetected((data) => {
+        resultElement.textContent = `Código detectado: ${data.codeResult.code}`;
+        console.log("Código detectado:", data.codeResult.code);
+      });
+    });
+  </script>
 </body>
 </html>
