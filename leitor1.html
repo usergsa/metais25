@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitor de Código de Barras</title>
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+</head>
+<body>
+ <div class="interface">
+    <div class="vd" id="scanner-container"></div>
+    <h1 id="output">Resultado: Nenhum código detectado</h1>
+    <button id="capture-btn">Capturar Imagem</button>
+    <div id="snapshot-container">
+        <h2>Imagem Capturada:</h2>
+        <img id="captured-image" alt="Imagem capturada aparecerá aqui">
+    </div>
+</div>
+<style>
+ .interface {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    gap: 20px;
+  }
+
+  .vd {
+    width: 70%;
+    height: 50%;
+    overflow: hidden;
+    display: grid;
+  }
+
+  .vd video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #snapshot-container {
+    text-align: center;
+  }
+
+  #captured-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  }
+</style>
+<script>
+    Quagga.init({
+        inputStream: {
+            name: "Live",
+            type: "LiveStream",
+            target: document.querySelector('#scanner-container'),
+        },
+        decoder: {
+            readers: ["code_128_reader", "ean_reader"]
+        }
+    }, function(err) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        Quagga.start();
+    });
+
+    Quagga.onDetected(function(result) {
+        document.getElementById("output").innerText = "Resultado: " + result.codeResult.code;
+    });
+
+    // Capturar a imagem do feed de vídeo
+    const captureBtn = document.getElementById("capture-btn");
+    captureBtn.addEventListener("click", () => {
+        const video = document.querySelector("#scanner-container video");
+        if (!video) {
+            alert("Vídeo ainda não está disponível.");
+            return;
+        }
+
+        // Criar um canvas para capturar o frame
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        // Configurar o tamanho do canvas para corresponder ao vídeo
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Desenhar o frame atual do vídeo no canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Obter a imagem como URL (base64)
+        const imageData = canvas.toDataURL("image/png");
+
+        // Exibir a imagem capturada
+        const capturedImage = document.getElementById("captured-image");
+        capturedImage.src = imageData;
+    });
+</script>
+</body>
+</html>
