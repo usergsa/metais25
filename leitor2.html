@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitor de Código de Barras</title>
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+        }
+        .interface {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        .vd {
+            width: 80vw;
+            max-width: 600px;
+            height: 50vh;
+            background: black;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .vd video {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 5px;
+            background: #ff4081;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #e91e63;
+        }
+        #snapshot-container {
+            margin-top: 20px;
+        }
+        #captured-image {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="interface">
+        <h1>Leitor de Código de Barras</h1>
+        <div class="vd" id="scanner-container"></div>
+        <h2 id="output">Resultado: Nenhum código detectado</h2>
+        <button id="capture-btn">Capturar Imagem</button>
+        <div id="snapshot-container">
+            <h3>Imagem Capturada:</h3>
+            <img id="captured-image" alt="Imagem capturada aparecerá aqui">
+        </div>
+    </div>
+    <script>
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: document.querySelector('#scanner-container'),
+            },
+            decoder: {
+                readers: ["code_128_reader", "ean_reader"]
+            }
+        }, function(err) {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            Quagga.start();
+        });
+
+        Quagga.onDetected(function(result) {
+            document.getElementById("output").innerText = "Resultado: " + result.codeResult.code;
+        });
+
+        document.getElementById("capture-btn").addEventListener("click", () => {
+            const video = document.querySelector("#scanner-container video");
+            if (!video) {
+                alert("Vídeo ainda não está disponível.");
+                return;
+            }
+
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            document.getElementById("captured-image").src = canvas.toDataURL("image/png");
+        });
+    </script>
+</body>
+</html>
