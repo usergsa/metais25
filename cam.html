@@ -1,32 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Acessar Câmera</title>
+    <title>Alternar Câmeras</title>
 </head>
 <body>
-    <h1>Acessar Câmera e Tirar Foto</h1>
+    <h1>Alternar entre Câmeras</h1>
     <video id="video" width="640" height="480" autoplay></video>
-    <button id="snap">Tirar Foto</button>
-    <canvas id="canvas" width="640" height="480"></canvas>
+    <button id="switch">Alternar Câmera</button>
 
     <script>
-        // Acessar a câmera
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(function(stream) {
-                var video = document.getElementById('video');
-                video.srcObject = stream;
-                video.play();
-            })
-            .catch(function(err) {
-                console.log("Ocorreu um erro: " + err);
+        let currentStream = null;
+        let currentDeviceIndex = 0;
+        let videoDevices = [];
+
+        // Função para iniciar a câmera
+        function startCamera(deviceId) {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+
+            navigator.mediaDevices.getUserMedia({ video: { deviceId: deviceId } })
+                .then(function(stream) {
+                    currentStream = stream;
+                    var video = document.getElementById('video');
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(function(err) {
+                    console.log("Ocorreu um erro: " + err);
+                });
+        }
+
+        // Obter dispositivos de vídeo
+        navigator.mediaDevices.enumerateDevices()
+            .then(function(devices) {
+                videoDevices = devices.filter(device => device.kind === 'videoinput');
+                if (videoDevices.length > 0) {
+                    startCamera(videoDevices[currentDeviceIndex].deviceId);
+                }
             });
 
-        // Tirar foto
-        document.getElementById('snap').addEventListener('click', function() {
-            var canvas = document.getElementById('canvas');
-            var context = canvas.getContext('2d');
-            var video = document.getElementById('video');
-            context.drawImage(video, 0, 0, 640, 480);
+        // Alternar entre as câmeras
+        document.getElementById('switch').addEventListener('click', function() {
+            currentDeviceIndex = (currentDeviceIndex + 1) % videoDevices.length;
+            startCamera(videoDevices[currentDeviceIndex].deviceId);
         });
     </script>
 </body>
