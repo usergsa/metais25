@@ -1,57 +1,32 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acessar Câmera Traseira</title>
+    <title>Acessar Câmera</title>
 </head>
-<body id="touchArea">
-    <h1>Acessar Câmera Traseira do Celular</h1>
-    <video id="video" width="320" height="240" autoplay></video>
+<body>
+    <h1>Acessar Câmera e Tirar Foto</h1>
+    <video id="video" width="640" height="480" autoplay></video>
     <button id="snap">Tirar Foto</button>
-    <canvas id="canvas" width="320" height="240"></canvas>
+    <canvas id="canvas" width="640" height="480"></canvas>
 
     <script>
-        // Acessar a câmera traseira
-
-navigator.permissions.query({ name: "camera" }).then((permission) => {
-    console.log("Status da permissão da câmera:", permission.state);
-    if (permission.state === "granted") {
-        iniciarCamera(); // Se já está permitido, inicia a câmera direto
-    } else if (permission.state === "prompt") {
-        solicitarPermissao(); // Se precisa pedir, chama a função para pedir
-    } else {
-        alert("Permissão negada! Vá nas configurações do navegador e habilite manualmente.");
-    }
-});
-
-function solicitarPermissao() {
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-        .then((stream) => {
-            var video = document.getElementById('video');
-            video.srcObject = stream;
-            video.play();
-        })
-        .catch((err) => {
-            console.error("Erro ao acessar a câmera:", err);
-            alert("Erro ao acessar a câmera. Verifique permissões e tente novamente.");
-        });
-}
-
-
+        // Acessar a câmera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                var video = document.getElementById('video');
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(function(err) {
+                console.log("Ocorreu um erro: " + err);
+            });
 
         // Tirar foto
         document.getElementById('snap').addEventListener('click', function() {
             var canvas = document.getElementById('canvas');
             var context = canvas.getContext('2d');
             var video = document.getElementById('video');
-            context.drawImage(video, 0, 0, 320, 240);
-        });
-
-        // Adicionar evento de toque
-        var touchArea = document.getElementById("touchArea");
-        touchArea.addEventListener("touchstart", function(event) {
-            touchArea.style.background = "lightgreen";
+            context.drawImage(video, 0, 0, 640, 480);
         });
     </script>
 </body>
